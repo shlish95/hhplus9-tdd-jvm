@@ -4,6 +4,7 @@ import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
@@ -65,6 +66,55 @@ class UserPointServiceTest {
 
         //then
         assertThat(userPoint.point()).isEqualTo(pointAmount - subtractPoint);
+    }
+
+    @Nested
+    class 예외처리 {
+        @DisplayName("충전하려는 포인트가 1보다 작으면 예외 발생")
+        @Test
+        void chargePointUnderOne_shouldFail() {
+            //given
+            long userId = 4L;
+            long invalidAmount = 0L;
+
+            //when
+            //then
+            assertThatThrownBy(() -> userPointService.charge(userId, invalidAmount))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("충전 포인트는 1 이상이어야 합니다.");
+        }
+
+        @DisplayName("사용하려는 포인트가 1보다 작으면 예외 발생")
+        @Test
+        void usePointUnderOne_shouldFail() {
+            //given
+            long userId = 5L;
+            long invalidAmount = 0L;
+
+            //when
+            //then
+            assertThatThrownBy(() -> userPointService.use(userId, invalidAmount))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("사용 포인트는 1 이상이어야 합니다.");
+        }
+
+        @DisplayName("사용하려는 포인트가 잔여 포인트 보다 크면 예외 발생")
+        @Test
+        void usePointOverBalance_shouldFail() {
+            //given
+            long userId = 6L;
+            long ownPointAmount = 1000L;
+            long usePointAmount = 1500L;
+
+            //when
+            userPointService.charge(userId, ownPointAmount);
+
+            //then
+            assertThatThrownBy(() -> userPointService.use(userId, usePointAmount))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("잔액보다 많은 포인트를 사용할 수 없습니다.");
+
+        }
     }
 
 }

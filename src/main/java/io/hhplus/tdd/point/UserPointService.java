@@ -11,17 +11,17 @@ public class UserPointService {
 
     private final UserPointTable userPointTable;
 
-    public void charge(long userId, long pointAmount) {
+    public UserPoint charge(long userId, long pointAmount) {
         long afterAddPoint = userPointTable.selectById(userId).point() + pointAmount;
-        userPointTable.insertOrUpdate(userId, afterAddPoint);
+        return userPointTable.insertOrUpdate(userId, afterAddPoint);
     }
 
-    public long getPoint(long userId) {
-        return userPointTable.selectById(userId).point();
+    public UserPoint getPoint(long userId) {
+        return userPointTable.selectById(userId);
     }
 
-    public void use(long userId, long subtractPoint) {
+    public UserPoint use(long userId, long subtractPoint) {
         long afterSubtractPoint = userPointTable.selectById(userId).point() - subtractPoint;
-        userPointTable.insertOrUpdate(userId, afterSubtractPoint);
+        return userPointTable.insertOrUpdate(userId, afterSubtractPoint);
     }
 }

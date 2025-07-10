@@ -26,10 +26,10 @@ class UserPointServiceTest {
         userPointService.charge(userId, pointAmount);
 
         //when
-        long userPoint = userPointService.getPoint(userId);
+        UserPoint userPoint = userPointService.getPoint(userId);
 
         //then
-        assertThat(userPoint).isEqualTo(pointAmount);
+        assertThat(userPoint.point()).isEqualTo(pointAmount);
     }
 
     @DisplayName("포인트 적립하고 변화한 포인트 조회")
@@ -43,10 +43,10 @@ class UserPointServiceTest {
         //when
         userPointService.charge(userId, pointAmount);
         userPointService.charge(userId, addPoint);
-        long point = userPointService.getPoint(userId);
+        UserPoint userPoint = userPointService.getPoint(userId);
 
         //then
-        assertThat(point).isEqualTo(pointAmount + addPoint);
+        assertThat(userPoint.point()).isEqualTo(pointAmount + addPoint);
     }
 
     @DisplayName("포인트 사용하고 변화한 포인트 조회")
@@ -61,10 +61,10 @@ class UserPointServiceTest {
 
         //when
         userPointService.use(userId, subtractPoint);
-        long point = userPointService.getPoint(userId);
+        UserPoint userPoint = userPointService.getPoint(userId);
 
         //then
-        assertThat(point).isEqualTo(pointAmount - subtractPoint);
+        assertThat(userPoint.point()).isEqualTo(pointAmount - subtractPoint);
     }
 
 }
